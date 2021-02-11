@@ -1,0 +1,155 @@
+:root {
+    --size_square_0: 60px;
+    --size_square_1: 40px;
+    --size_square_2: 28px;
+}
+@font-face {
+    font-family: 'Digital-clock';
+    src: url(../font/digital-7.ttf);
+}
+.game-gui {
+    align-items: flex-start;
+    align-self: center;
+    display: grid;
+    grid-template-columns: 25% 50% 25%;
+}
+div label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.board {
+    *border: 1px solid black;
+    display: grid;
+    column-gap: 2px;
+    justify-content: center;
+    row-gap: 2px;
+}
+
+.board-0 {
+    grid-template-columns: repeat(10,var(--size_square_0));
+}
+.board-1 {
+    grid-template-columns: repeat(16,var(--size_square_1));
+}
+.board-2 {
+    grid-template-columns: repeat(22,var(--size_square_2));
+}
+
+.square-0, .square-1, .square-2 {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.square-0 {
+    height: var(--size_square_0);
+    width: var(--size_square_0);
+    font-size: 24px;
+}
+.square-1 {
+    height: var(--size_square_1);
+    width: var(--size_square_1);
+    font-size: 20px;
+}
+.square-2 {
+    height: var(--size_square_2);
+    width: var(--size_square_2);
+    font-size: 16px;
+}
+
+.sq {
+    background-color: rgba(200, 200, 200, 0.5);
+}
+.sq:hover {
+    background-color: rgba(175, 175, 175, 0.5);
+}
+
+.sq-1 {
+    background-color: rgba(255, 0, 0, 0.5);
+}
+
+.sq0 {
+    background-color: rgba(150, 150, 150, 0.5);
+}
+
+.sq1 {
+    background-color: hsla(212, 100%, 50%, 0.5);
+}
+
+.sq2 {
+    background-color: rgba(0, 255, 42, 0.5);
+}
+
+.sq3 {
+    background-color: rgba(255, 255, 0, 0.5);
+}
+
+.sq4 {
+    background-color: rgba(255, 192, 203, 0.5);
+}
+
+.sq5 {
+    background-color: rgba(255, 145, 0, 0.5);
+}
+
+.sq6 {
+    background-color: rgba(128, 0, 128);
+    color: white;
+}
+
+.sq7 {
+    background-color: rgba(0, 4, 255);
+    color: white;
+}
+
+.sq8 {
+    background-color: rgb(0, 0, 0);
+    color: white;
+}
+
+.sq, .sq1, .sq2, .sq3,.sq4, .sq5, .sq6, .sq7, .sq8:hover {
+    cursor: pointer;
+}
+
+.hidden {
+    display: none;
+}
+
+.message {
+    border-radius: 15px;
+    margin: 15px auto;
+    padding: 15px;
+    width: 50%;
+    height: 80px;
+}
+
+.message button {
+    height: 30px;
+    width: 80px;
+}
+
+.win {
+    background-color: rgba(172, 255, 47, 0.5);
+    border: 2px solid green;
+}
+
+.lose {
+    background-color: rgba(255, 0, 0, 0.5);
+    border: 2px solid red;
+}
+
+.display {
+    background-color: rgb(58, 58, 58);
+    border: 4px solid black;
+    border-radius: 10px;
+    margin: 0 auto;
+    padding: 5px;
+    width: 150px;
+    height: 90px;
+    display: grid;
+    text-align: right;
+    color: red;
+    font-family: 'Digital-clock';
+    font-size: 80px;
+}
