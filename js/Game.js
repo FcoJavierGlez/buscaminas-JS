@@ -240,7 +240,7 @@ Game = (
             for (let i = 0; i < boardGame.length; i++) 
                 for (let j = 0; j < boardGame.length; j++) 
                     countAvailableFlags -= boardGame[i][j].getStatus() === 1 ? 1 : 0;
-            availableFlags = countAvailableFlags;
+            return countAvailableFlags;
         }
 
         /**
@@ -296,11 +296,14 @@ Game = (
                 2: secundaryAction,
                 3: clueAction
             }
-            ACTIONS_HANDLER[action](row,column)
+            ACTIONS_HANDLER[action](row,column);
         }
 
         /**
          * Acción a realizar sobre una casilla según el botón o botones del ratón que se haya pulsado.
+         * 1: botón izquierdo
+         * 2: botón derecho
+         * 3: ambos botones
          * 
          * @param {Number} action Valor comprendido entre [1-3] que determina la acción a ejecutar:
          *                          1: botón izquierdo
@@ -310,20 +313,21 @@ Game = (
          */
         const action = function(action,[row,column]) {
             if (loseGame || winGame) return;
+            if (action < 1 || action > 3) return;
             if (row < 0 || row > boardGame.length - 1 || column < 0 || column > boardGame.length - 1) return;
             executeAction(action,[row,column]);
             loseGame || winGame ? revealBoardGame() : false;
-            recountAvailableFlags();
+            availableFlags = recountAvailableFlags();
         }
 
         return {
             init: init,
             action: action,
+            /* show: showBoardGame, */
             getBoardGame: getBoardGame,
             getAvailableFlags: getAvailableFlags,
             getLoseGame: getLoseGame,
             getWinGame: getWinGame,
-            /* showBoardGame: showBoardGame, */
         }
     }
 )()

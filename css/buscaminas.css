@@ -66,11 +66,13 @@ div label {
 }
 
 .sq-1 {
-    background-color: rgba(255, 0, 0, 0.5);
+    background-color: rgba(200, 200, 200, 0.5);
+    background-position: center;
+    background-size: 100%;
 }
 
 .sq0 {
-    background-color: rgba(150, 150, 150, 0.5);
+    background-color: rgba(100, 100, 100, 0.5);
 }
 
 .sq1 {
@@ -152,4 +154,36 @@ div label {
     color: red;
     font-family: 'Digital-clock';
     font-size: 80px;
+}
+
+.flag {
+    background-image: url(../img/icons/flag.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.question-mark {
+    background-image: url(../img/icons/question_mark.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.explosion {
+    background-position: center;
+    background-size: 100%;
+}
+
+@keyframes detonateBomb {
+    from {
+        background-size: 0%; 
+        background-color: rgba(200, 200, 200, 0.5);
+    }
+    to {
+        background-color: rgba(255, 0, 0, 0.5);
+        background-image: url(../img/icons/explosion.png); 
+        background-position: center;
+        background-repeat: no-repeat;
+    }
 }

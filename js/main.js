@@ -5,22 +5,7 @@
  */
 {
     let boardGame = null;
-
-    const selectClass = n => {
-        const a = {
-            '-1': 'sq-1',
-            '0': 'sq0',
-            '1': 'sq1',
-            '2': 'sq2',
-            '3': 'sq3',
-            '4': 'sq4',
-            '5': 'sq5',
-            '6': 'sq6',
-            '7': 'sq7',
-            '8': 'sq8'
-        }
-        return a[`${n}`];
-    }
+    let difficulty = 1;
 
     document.addEventListener("DOMContentLoaded", () => {
         const main         = document.getElementsByTagName("main")[0];
@@ -41,45 +26,46 @@
 
         }
 
-        const render = function(difficulty) {
+        const render = function(coordinates) {
             const BOARDGAME = Game.getBoardGame();
             const SIZE_BOARDGAME = BOARDGAME.length;
+            const [row,column] = [...coordinates];
+
+            let delayBomb = 0;
     
             for (let i = 0; i < SIZE_BOARDGAME; i++)
                 for (let j = 0; j < SIZE_BOARDGAME; j++) {
-                    if (BOARDGAME[i][j].getStatus() !== 0) {
-                        boardGame[i][j].innerHTML = BOARDGAME[i][j].getStatus() === 1 ? '<b>\u{1F3F2}</b>' : '<b>?</b>';
-                        boardGame[i][j].classList = BOARDGAME[i][j].getStatus() === 1 ? `square-${difficulty} sq error` : `square-${difficulty} sq`;
-                    }
+                    if (BOARDGAME[i][j].getStatus() !== 0) 
+                        boardGame[i][j].classList = BOARDGAME[i][j].getStatus() === 1 ? `square-${difficulty} sq flag` : `square-${difficulty} sq question-mark`;
                     else {
-                        boardGame[i][j].classList = BOARDGAME[i][j].getVisible() ? 
-                            `square-${difficulty} sq${BOARDGAME[i][j].getValue()}` : `square-${difficulty} sq`;
-                        boardGame[i][j].innerHTML = BOARDGAME[i][j].getVisible() && BOARDGAME[i][j].getValue() === -1 ? '<b>\u{1F4A5}</b>' : BOARDGAME[i][j].getVisible() && BOARDGAME[i][j].getValue() > 0 ?
-                            `<b>${BOARDGAME[i][j].getValue()}</b>` : ``;
+                        boardGame[i][j].classList = BOARDGAME[i][j].getVisible() ? `square-${difficulty} sq${BOARDGAME[i][j].getValue()}` : `square-${difficulty} sq`;
+                        boardGame[i][j].innerHTML = BOARDGAME[i][j].getVisible() && BOARDGAME[i][j].getValue() > 0 ? `<b>${BOARDGAME[i][j].getValue()}</b>` : ``;
+                        if (Game.getLoseGame() && BOARDGAME[i][j].getValue() == -1)
+                            i == row && j == column ? boardGame[i][j].style.animation = `detonateBomb 1s forwards` : boardGame[i][j].style.animation = `detonateBomb 1s ${1 + 0.25 * ++delayBomb}s forwards`;
                     }
                 }
             
             renderAvailableFlags();
         }
     
-        const createSquare = function(row,column,difficulty) {
+        const createSquare = function(row,column) {
             const div = document.createElement("div");
             div.classList = `square-${difficulty} sq`
             div.addEventListener("mousedown", e => {
                 Game.action(e.buttons,[row,column]);
-                render(difficulty);
+                render([row,column]);
             } );
             return div;
         }
     
-        const createBoardGame = function(difficulty) {
+        const createBoardGame = function() {
             let boardGame = [];
             const fragment = new DocumentFragment();
             const columns = Game.getBoardGame().length;
             for (let i = 0; i < columns; i++) {
                 boardGame.push([]);
                 for (let j = 0; j < columns; j++) {
-                    const square = createSquare(i,j,difficulty);
+                    const square = createSquare(i,j);
                     boardGame[i].push(square);
                     fragment.appendChild(square);
                 }
@@ -102,6 +88,9 @@
 
         initGame(1);
 
-        select.addEventListener( "change", () => initGame(select.value) );
+        select.addEventListener( "change", () => {
+            difficulty = select.value;
+            initGame(difficulty);
+        } );
     });
 }
