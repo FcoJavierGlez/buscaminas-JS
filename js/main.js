@@ -4,29 +4,33 @@
  * @author Francisco Javier González Sabariego
  */
 {
-    let boardGame = null;
+    let boardGame  = null;
     let difficulty = 1;
+    let newRecord  = false;
+
+    const createCookies = (difficultyLevels) => {
+        if (localStorage.getItem("buscaminas_0") == null) 
+            [...difficultyLevels.children].forEach( e => localStorage.setItem(`buscaminas_${e.value}`, 86400) );
+    }
 
     document.addEventListener("DOMContentLoaded", () => {
         const main         = document.getElementsByTagName("main")[0];
         const select       = document.getElementsByTagName("select")[0];
+        const endScreen    = document.body.getElementsByTagName("div")[0];
+        const buttonReset  = document.getElementsByTagName("button")[0];
+
         const boardGameGui = main.children[0].children[1];
         const displayFlags = main.children[0].children[2].children[1].children[1];
         const displayTime  = main.children[0].children[2].children[2].children[1];
-        const message      = main.children[0].children[2].children[3];
-        const buttonReset  = document.getElementsByTagName("button")[0];
+        const message      = endScreen.children[0];
+
+        displayTime.innerHTML = '00:00:00';
+
+        createCookies(select);
 
         document.addEventListener("contextmenu", e => e.preventDefault() );
 
-        const renderAvailableFlags = function() {
-            displayFlags.innerHTML = `${Game.getAvailableFlags()}`;
-        }
-
-        const renderTime = function() {
-
-        }
-
-        const render = function(coordinates) {
+        const renderBoardGame = (coordinates) => {
             const BOARDGAME = Game.getBoardGame();
             const SIZE_BOARDGAME = BOARDGAME.length;
             const [row,column] = [...coordinates];
@@ -44,8 +48,32 @@
                             i == row && j == column ? boardGame[i][j].style.animation = `detonateBomb 1s forwards` : boardGame[i][j].style.animation = `detonateBomb 1s ${1 + 0.25 * ++delayBomb}s forwards`;
                     }
                 }
-            
-            renderAvailableFlags();
+        }
+
+        const renderTime = function() {
+            setInterval( () => {
+                displayTime.innerHTML = `${Game.getTime(true)}`;
+            }, 250);
+        }
+
+        const render = function(coordinates) {
+            renderBoardGame(coordinates);
+
+            displayFlags.innerHTML = `${Game.getAvailableFlags()}`;
+
+            if (Game.getWinGame() || Game.getLoseGame()) {
+                if (Game.getWinGame()) {
+                    newRecord = Game.getTime() < localStorage.getItem(`buscaminas_${difficulty}`);
+                    localStorage.setItem(`buscaminas_${difficulty}`,Game.getTime());
+                }
+                
+                message.classList = `message ${Game.getWinGame() ? 'win' : 'lose'}`;
+                message.style.animation = `showMessage 1s forwards`;
+                message.children[0].innerHTML = Game.getLoseGame() ? `<h3>¡Lo siento, has perdido! \u{1F622}</h3>` :
+                    newRecord ? `<h3>¡¡Enhorabuena, has ganado!! \u{1F389}</h3><h3>¡¡Has obtenido un nuevo record!! Terminaste en ${Game.getTime(true)}  \u{1F389}\u{1F389}</h3>` :
+                        `<h3>¡¡Enhorabuena, has ganado!! \u{1F389}</h3>`;
+                endScreen.classList.toggle("hidden");
+            }
         }
     
         const createSquare = function(row,column) {
@@ -83,14 +111,22 @@
     
             boardGameGui.classList = `board board-${difficulty}`;
             boardGameGui.appendChild(fragment);
-            renderAvailableFlags();
+            displayFlags.innerHTML = `${Game.getAvailableFlags()}`;
         }
 
         initGame(1);
+        renderTime();
 
         select.addEventListener( "change", () => {
             difficulty = select.value;
             initGame(difficulty);
         } );
+
+        buttonReset.addEventListener("click", () => {
+            newRecord = false;
+            message.classList = `message hidden`;
+            endScreen.classList.toggle("hidden");
+            initGame(difficulty);
+        })
     });
 }

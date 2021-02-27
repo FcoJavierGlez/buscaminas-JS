@@ -1,6 +1,7 @@
 Game = ( 
     function () {
-        let boardGame = [];
+        let boardGame  = [];
+        let temporizer = null;
         let numberMines, availableFlags = 0;
         let createdBoard, loseGame, winGame = false;
 
@@ -17,6 +18,7 @@ Game = (
             createdBoard = loseGame = winGame = false;
             boardGame = createBoardGame(difficulty);
             availableFlags = numberMines  = setNumberMines(difficulty);
+            temporizer = new Chronometer(0);
         }
 
         /**
@@ -54,6 +56,17 @@ Game = (
          */
         const getWinGame = function() {
             return winGame;
+        }
+
+        /**
+         * Devuelve el tiempo al macenado en el temporizador
+         * 
+         * @param {Boolean} formatTime True para obtener un tiempo formateado '23:59:59' false para obtener el total en segundos
+         * 
+         * @return Tiempo almacenado en el temporizador
+         */
+        const getTime = function(formatTime = false) {
+            return temporizer.getTime(formatTime);
         }
 
         /**
@@ -253,7 +266,7 @@ Game = (
             const button = boardGame[row][column];
             button.revealSquare();
             if (!button.getVisible()) return;
-            if (!createdBoard) insertMines([row,column]);
+            !createdBoard ? (insertMines([row,column]), temporizer.togglePause()) : false;
             if (button.getValue() === 0) revealEmptyArea([row,column]);
             button.getValue() === -1 ? loseGame = true : checkWin();
         }
@@ -316,7 +329,7 @@ Game = (
             if (action < 1 || action > 3) return;
             if (row < 0 || row > boardGame.length - 1 || column < 0 || column > boardGame.length - 1) return;
             executeAction(action,[row,column]);
-            loseGame || winGame ? revealBoardGame() : false;
+            loseGame || winGame ? (revealBoardGame(), temporizer.togglePause()) : false;
             availableFlags = recountAvailableFlags();
         }
 
@@ -328,6 +341,7 @@ Game = (
             getAvailableFlags: getAvailableFlags,
             getLoseGame: getLoseGame,
             getWinGame: getWinGame,
+            getTime: getTime,
         }
     }
 )()

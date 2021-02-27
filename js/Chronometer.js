@@ -12,13 +12,13 @@ class Chronometer {
         this.#setTime(time);
     }
 
-    getTime = function() {
+    getTime = function(formatTime = false) {
         const [hours,minutes,seconds] = [
             this.#seconds >= 3600 ? parseInt(this.#seconds/3600) % 60 : 0,
             this.#seconds >= 60 ? parseInt(this.#seconds/60) % 60 : 0,
             this.#seconds % 60
         ];
-        return `${this.#formatTime(hours)}:${this.#formatTime(minutes)}:${this.#formatTime(seconds)}`;
+        return formatTime ? `${this.#formatTime(hours)}:${this.#formatTime(minutes)}:${this.#formatTime(seconds)}` : this.#seconds;
     }
 
     togglePause = function() {
