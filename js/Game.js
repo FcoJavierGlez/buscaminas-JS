@@ -302,6 +302,7 @@ Game = (
                     }
                 }
             }
+            if (!clue) checkWin();
         }
 
         /**
