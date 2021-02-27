@@ -15,11 +15,6 @@ const Square = class {
         if (this._status !== 0) return;
         this._visible = true;
     }
-    /* reset() {
-        this._value    = 0;
-        this._status = 0;
-        this._visible  = false;
-    } */
     increaseValue() {
         ++this._value;
     }
@@ -41,13 +36,7 @@ const Square = class {
     getClue = function() {
         return this._clue;
     }
-    enableClue() {
-        this._clue = true;
-    }
-    disableClue() {
-        this._clue = false;
-    }
-    /* toggleClue() {
+    toggleClue() {
         this._clue = !this._clue;
-    } */
+    }
 }
