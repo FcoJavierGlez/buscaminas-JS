@@ -64,7 +64,7 @@
             if (Game.getWinGame() || Game.getLoseGame()) {
                 if (Game.getWinGame()) {
                     newRecord = Game.getTime() < localStorage.getItem(`buscaminas_${difficulty}`);
-                    localStorage.setItem(`buscaminas_${difficulty}`,Game.getTime());
+                    newRecord ? localStorage.setItem(`buscaminas_${difficulty}`,Game.getTime()) : false;
                 }
                 
                 message.classList = `message ${Game.getWinGame() ? 'win' : 'lose'}`;
