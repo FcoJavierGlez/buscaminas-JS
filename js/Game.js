@@ -257,9 +257,13 @@ Game = (
         }
 
         /**
+         * Devuelve el total de banderas al rededor de la casilla cuyas coordenadas 
+         * son pasadas como parámetros
          * 
-         * @param {*} row 
-         * @param {*} column 
+         * @param {Number} row    Coordenada fila de la casilla sobre la que se ejecuta la acción
+         * @param {Number} column Coordenada columna de la casilla sobre la que se ejecuta la acción
+         * 
+         * @return Total de banderas alrededor de las casillas pasadas como parámetro.
          */
         const accountFlagsAroundSquare = function(row,column) {
             let account = 0;
@@ -272,19 +276,22 @@ Game = (
         }
 
         /**
+         * Ejecuta la acción "pista" o revela las casillas
+         * al rededor de las coordenadas pasadas como parámetros
+         * en función del valor del tercer parámetro.
          * 
-         * @param {*} row 
-         * @param {*} column 
-         * @param {*} clue 
+         * @param {Number} row    Coordenada fila de la casilla sobre la que se ejecuta la acción
+         * @param {Number} column Coordenada columna de la casilla sobre la que se ejecuta la acción
+         * @param {Boolean} clue  [Opcional]: True para marcas las casillas como pistas
+         *                          false para desvelarlas. Por defecto su valor es false.
          */
-        const algo = function(row,column,clue = false) {
+        const executeClueAction = function(row,column,clue = false) {
             let maxRow = max(row + 1,boardGame.length - 1);
             let maxCol = max(column + 1,boardGame.length - 1);
             for (let i = min(row - 1,0); i <= maxRow; i++) {
                 for (let j = min(column - 1,0); j <= maxCol; j++) {
                     if (clue) 
-                        !boardGame[i][j].getVisible() ? boardGame[i][j].enableClue() : false;
-                        //!boardGame[i][j].getVisible() ? boardGame[i][j].toggleClue() : false;
+                        !boardGame[i][j].getVisible() ? boardGame[i][j].toggleClue() : false;
                     else if (!loseGame) {
                         if (boardGame[i][j].getStatus() == 0 && !boardGame[i][j].getVisible()) {
                             boardGame[i][j].revealSquare();
@@ -298,13 +305,12 @@ Game = (
         }
 
         /**
-         * 
+         * Limpia las casillas marcadas como pistas.
          */
         const clearClues = function() {
             for (let i = 0; i < boardGame.length; i++) 
                 for (let j = 0; j < boardGame.length; j++) 
-                    if (boardGame[i][j].getClue()) boardGame[i][j].disableClue();
-                    //boardGame[i][j].getClue() ? boardGame[i][j].toggleClue() : false;
+                    if (boardGame[i][j].getClue()) boardGame[i][j].toggleClue();
         }
 
         /**
@@ -344,7 +350,9 @@ Game = (
         }
 
         /**
-         * 
+         * Acción pista: marcas las casillas donde puede haber mina o desvela las casillas de alrededor
+         * cuando el número de banderas coincide con el número de la casilla cuyas coordenadas son pasadas
+         * como parámetro.
          * 
          * @param {Number} row    Coordenada fila de la casilla sobre la que se ejecuta la acción
          * @param {Number} column Coordenada columna de la casilla sobre la que se ejecuta la acción
@@ -353,9 +361,9 @@ Game = (
             const square = boardGame[row][column];
             if (!square.getVisible() || square.getValue() == 0) return;
             if (square.getValue() == accountFlagsAroundSquare(row,column)) 
-                algo(row,column);
+                executeClueAction(row,column);
             else {
-                algo(row,column,true);
+                executeClueAction(row,column,true);
                 activatedClue = true;
             }
         }
@@ -402,7 +410,7 @@ Game = (
         return {
             init: init,
             action: action,
-            show: showBoardGame,
+            /* show: showBoardGame, */
             getBoardGame: getBoardGame,
             getAvailableFlags: getAvailableFlags,
             getLoseGame: getLoseGame,
