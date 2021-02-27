@@ -3,7 +3,7 @@ Game = (
         let boardGame  = [];
         let temporizer = null;
         let numberMines, availableFlags = 0;
-        let createdBoard, loseGame, winGame = false;
+        let activatedClue, createdBoard, loseGame, winGame = false;
 
         /**
          * Inicia el juego con la dificultad pasada por parámetro
@@ -15,7 +15,7 @@ Game = (
          */
         const init = function(difficulty) {
             if (isNaN(difficulty) || difficulty < 0 || difficulty > 2) difficulty = 1;
-            createdBoard = loseGame = winGame = false;
+            activatedClue = createdBoard = loseGame = winGame = false;
             boardGame = createBoardGame(difficulty);
             availableFlags = numberMines  = setNumberMines(difficulty);
             temporizer = new Chronometer(0);
@@ -257,18 +257,73 @@ Game = (
         }
 
         /**
+         * 
+         * @param {*} row 
+         * @param {*} column 
+         */
+        const accountFlagsAroundSquare = function(row,column) {
+            let account = 0;
+            let maxRow = max(row + 1,boardGame.length - 1);
+            let maxCol = max(column + 1,boardGame.length - 1);
+            for (let i = min(row - 1,0); i <= maxRow; i++) 
+                for (let j = min(column - 1,0); j <= maxCol; j++) 
+                    if (!boardGame[i][j].getVisible() && boardGame[i][j].getStatus() === 1) ++account;
+            return account
+        }
+
+        /**
+         * 
+         * @param {*} row 
+         * @param {*} column 
+         * @param {*} clue 
+         */
+        const algo = function(row,column,clue = false) {
+            let maxRow = max(row + 1,boardGame.length - 1);
+            let maxCol = max(column + 1,boardGame.length - 1);
+            for (let i = min(row - 1,0); i <= maxRow; i++) {
+                for (let j = min(column - 1,0); j <= maxCol; j++) {
+                    if (clue) 
+                        !boardGame[i][j].getVisible() ? boardGame[i][j].enableClue() : false;
+                        //!boardGame[i][j].getVisible() ? boardGame[i][j].toggleClue() : false;
+                    else if (!loseGame) {
+                        if (boardGame[i][j].getStatus() == 0 && !boardGame[i][j].getVisible()) {
+                            boardGame[i][j].revealSquare();
+                            if (boardGame[i][j].getValue() == 0) revealEmptyArea([i,j]);
+                        }
+                        loseGame = boardGame[i][j].getVisible() && boardGame[i][j].getValue() == -1;
+                        if (loseGame) clearClues();
+                    }
+                }
+            }
+        }
+
+        /**
+         * 
+         */
+        const clearClues = function() {
+            for (let i = 0; i < boardGame.length; i++) 
+                for (let j = 0; j < boardGame.length; j++) 
+                    if (boardGame[i][j].getClue()) boardGame[i][j].disableClue();
+                    //boardGame[i][j].getClue() ? boardGame[i][j].toggleClue() : false;
+        }
+
+        /**
          * Acción principal: destapa y revela una casilla oculta
          * 
          * @param {Number} row    Coordenada fila de la casilla a revelar
          * @param {Number} column Coordenada columna de la casilla a revelar
          */
         const mainAction = function(row,column) {
-            const button = boardGame[row][column];
-            button.revealSquare();
-            if (!button.getVisible()) return;
+            const square = boardGame[row][column];
+            square.revealSquare();
+            if (!square.getVisible()) return;
             !createdBoard ? (insertMines([row,column]), temporizer.togglePause()) : false;
-            if (button.getValue() === 0) revealEmptyArea([row,column]);
-            button.getValue() === -1 ? loseGame = true : checkWin();
+            if (square.getValue() === 0) revealEmptyArea([row,column]);
+            square.getValue() === -1 ? loseGame = true : checkWin();
+            if (activatedClue) {
+                clearClues();
+                activatedClue = false;
+            }
         }
 
         /**
@@ -279,9 +334,13 @@ Game = (
          * @param {Number} column Coordenada columna de la casilla sobre la que se ejecuta la acción
          */
         const secundaryAction = function(row,column) {
-            const button = boardGame[row][column];
-            if ( button.getVisible() || winGame || (availableFlags === 0 && button.getStatus() !== 1) ) return;
-            button.increaseStatus();
+            const square = boardGame[row][column];
+            if ( square.getVisible() || winGame || (availableFlags === 0 && square.getStatus() !== 1) ) return;
+            square.increaseStatus();
+            if (activatedClue) {
+                clearClues();
+                activatedClue = false;
+            }
         }
 
         /**
@@ -291,7 +350,14 @@ Game = (
          * @param {Number} column Coordenada columna de la casilla sobre la que se ejecuta la acción
          */
         const clueAction = function(row,column) {
-            //pending
+            const square = boardGame[row][column];
+            if (!square.getVisible() || square.getValue() == 0) return;
+            if (square.getValue() == accountFlagsAroundSquare(row,column)) 
+                algo(row,column);
+            else {
+                algo(row,column,true);
+                activatedClue = true;
+            }
         }
 
         /**
@@ -336,7 +402,7 @@ Game = (
         return {
             init: init,
             action: action,
-            /* show: showBoardGame, */
+            show: showBoardGame,
             getBoardGame: getBoardGame,
             getAvailableFlags: getAvailableFlags,
             getLoseGame: getLoseGame,

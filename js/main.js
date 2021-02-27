@@ -42,7 +42,8 @@
                     if (BOARDGAME[i][j].getStatus() !== 0) 
                         boardGame[i][j].classList = BOARDGAME[i][j].getStatus() === 1 ? `square-${difficulty} sq flag` : `square-${difficulty} sq question-mark`;
                     else {
-                        boardGame[i][j].classList = BOARDGAME[i][j].getVisible() ? `square-${difficulty} sq${BOARDGAME[i][j].getValue()}` : `square-${difficulty} sq`;
+                        boardGame[i][j].classList = BOARDGAME[i][j].getVisible() ? `square-${difficulty} sq${BOARDGAME[i][j].getValue()}` :
+                            BOARDGAME[i][j].getClue() ? `square-${difficulty} sq clue` : `square-${difficulty} sq`;
                         boardGame[i][j].innerHTML = BOARDGAME[i][j].getVisible() && BOARDGAME[i][j].getValue() > 0 ? `<b>${BOARDGAME[i][j].getValue()}</b>` : ``;
                         if (Game.getLoseGame() && BOARDGAME[i][j].getValue() == -1)
                             i == row && j == column ? boardGame[i][j].style.animation = `detonateBomb 1s forwards` : boardGame[i][j].style.animation = `detonateBomb 1s ${1 + 0.25 * ++delayBomb}s forwards`;

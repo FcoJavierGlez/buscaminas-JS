@@ -205,8 +205,27 @@ div label {
     background-size: 100%;
 }
 
+.clue {
+    animation: clue 1s infinite;
+}
+
 .hidden {
     display: none;
+}
+
+@keyframes clue {
+    0% {
+        filter: brightness(1);
+    }
+    25% {
+        filter: brightness(1.15);
+    }
+    50% {
+        filter: brightness(1);
+    }
+    75% {
+        filter: brightness(1.15);
+    }
 }
 
 @keyframes detonateBomb {

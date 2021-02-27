@@ -6,6 +6,7 @@ const Square = class {
         this._status  = 0;  //0 = normal | 1 = flag | 2 = question mark
         this._value   = 0;  //-1 = mine | 0+ = number of mines around it
         this._visible = false;
+        this._clue    = false;
     }
     increaseStatus() {
         this._status = this._status === 2 ? 0 : ++this._status;
@@ -37,4 +38,16 @@ const Square = class {
     getVisible = function() {
         return this._visible;
     }
+    getClue = function() {
+        return this._clue;
+    }
+    enableClue() {
+        this._clue = true;
+    }
+    disableClue() {
+        this._clue = false;
+    }
+    /* toggleClue() {
+        this._clue = !this._clue;
+    } */
 }
