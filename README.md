@@ -3,4 +3,4 @@
 ### Curso: 2º DAW (2020/21) | Centro: IES Gran Capitán (Córdoba).
 
 
-[GitPages del buscaminas](#).
+[GitPages del buscaminas](https://fcojavierglez.github.io/buscaminas-JS/).
